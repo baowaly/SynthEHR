@@ -184,10 +184,10 @@ class MEDGAN(object):
         return y_hat
     
     def buildDiscriminator(self, x_real, x_fake, keepRate, decodeVariables, bn_train):
-        ## Discriminate for real samples
+        #Discriminate for real samples
         y_hat_real = self.getDiscriminatorResults(x_real, keepRate, reuse=False)
 
-        ## Decompress, then discriminate for fake samples
+        #Decompress, then discriminate for fake samples
         tempVec = x_fake
         i = 0
         for _ in self.decompressDims[:-1]:
@@ -285,6 +285,7 @@ class MEDGAN(object):
         ## optimizer
         optimize_ae = tf.train.AdamOptimizer().minimize(self.loss_ae + sum(all_regs), var_list=self.ae_vars)
         optimize_d = tf.train.AdamOptimizer().minimize(self.loss_d + sum(all_regs), var_list=self.d_vars)
+        ## Chia-Ching: list(decodeVariables.values())
         optimize_g = tf.train.AdamOptimizer().minimize(self.loss_g + sum(all_regs), \
                                                        var_list = self.g_vars + list(self.decodeVariables.values()))
         ## load data
@@ -299,7 +300,7 @@ class MEDGAN(object):
 
         ## initialization
         self.sess.run(initOp)
-        
+
         ## load previous model if possible
         train_from_scratch = True
         epoch_counter = 0
@@ -355,7 +356,7 @@ class MEDGAN(object):
         g_loss_avg_vec = []
         corr_vec = []
         nzc_vec = []
-        for epoch in range(nEpochs):
+        for epoch in range(0, nEpochs+1):
             ## (1) training
             idx = np.arange(trainX.shape[0])
             d_loss_vec= []
@@ -400,9 +401,7 @@ class MEDGAN(object):
             self.print2file(buf, log_path)
 
             ## (3) Save model weights
-            ## counter for file names of saved models
-            epoch_counter += 1
-            if epoch % 10 == 0:
+            if epoch > 0 and epoch % 10 == 0:
                 save_path = self.saver.save(self.sess, os.path.join(self.model_name, 'models', self.model_name + '.model'),
                                             global_step=epoch_counter)
                 print(save_path)
@@ -411,8 +410,9 @@ class MEDGAN(object):
                 self.generateData(nSamples=trainX.shape[0],
                                   gen_from=self.model_name,
                                   out_name='temp.npy',
-                                  batchSize=1000)
+                                  batchSize=batchSize)
                 temp_data = np.load(self.model_name+'/outputs/temp.npy')
+                temp_data = np.rint(temp_data)
                 temp_data_mean = np.mean(temp_data, axis=0)
                 ## compute the correlation and number of all-zero columns
                 corr = pearsonr(temp_data_mean, train_data_mean)
@@ -434,6 +434,9 @@ class MEDGAN(object):
                 ax.set_ylabel('generated')
                 fig.savefig(self.model_name+'/outputs/{}.png'.format(epoch))
                 plt.close(fig)
+
+            ## counter for file names of saved models
+            epoch_counter += 1
 
         return [d_loss_avg_vec, g_loss_avg_vec, corr_vec, nzc_vec]
     
@@ -502,10 +505,10 @@ class MEDWGAN(MEDGAN):
         return y_hat
     
     def buildDiscriminator(self, x_real, x_fake, keepRate, decodeVariables, bn_train):
-        ## Discriminate for real samples
+        #Discriminate for real samples
         y_hat_real = self.getDiscriminatorResults(x_real, keepRate, reuse=False)
 
-        ## Decompress, then discriminate for fake samples
+        #Decompress, then discriminate for fake samples
         tempVec = x_fake
         i = 0
         for _ in self.decompressDims[:-1]:
@@ -620,7 +623,7 @@ class MEDWGAN(MEDGAN):
         g_loss_avg_vec = []
         corr_vec = []
         nzc_vec = []
-        for epoch in range(nEpochs):
+        for epoch in range(0, nEpochs+1):
             ## (1) training
             idx = np.arange(trainX.shape[0])
             d_loss_vec= []
@@ -655,7 +658,7 @@ class MEDWGAN(MEDGAN):
                 preds_real, preds_fake, = self.sess.run([self.y_hat_real, self.y_hat_fake],
                                                    feed_dict={self.x_raw:batchX, self.x_random:randomX,
                                                               self.keep_prob:1.0, self.bn_train:False})
-                ## Outputs of discriminator in WGAN are real numbers instead of probabilities.
+                ## Chia-Ching: outputs of discriminator in WGAN are real numbers instead of probabilities.
                 ## ==> Add sigmoid transformation here for validation.
                 preds_real = 1 / (1 + np.exp(-preds_real))
                 preds_fake = 1 / (1 + np.exp(-preds_fake))
@@ -669,9 +672,7 @@ class MEDWGAN(MEDGAN):
             self.print2file(buf, log_path)
 
             ## (3) Save model weights
-            ## counter for file names of saved models
-            epoch_counter += 1
-            if epoch % 10 == 0:
+            if epoch > 0 and epoch % 10 == 0:
                 save_path = self.saver.save(self.sess, os.path.join(self.model_name, 'models', self.model_name + '.model'),
                                             global_step=epoch_counter)
                 print(save_path)
@@ -680,8 +681,9 @@ class MEDWGAN(MEDGAN):
                 self.generateData(nSamples=trainX.shape[0],
                                   gen_from=self.model_name,
                                   out_name='temp.npy',
-                                  batchSize=1000)
+                                  batchSize=batchSize)
                 temp_data = np.load(self.model_name+'/outputs/temp.npy')
+                temp_data = np.rint(temp_data)
                 temp_data_mean = np.mean(temp_data, axis=0)
                 ## compute the correlation and number of all-zero columns
                 corr = pearsonr(temp_data_mean, train_data_mean)
@@ -703,6 +705,9 @@ class MEDWGAN(MEDGAN):
                 ax.set_ylabel('generated')
                 fig.savefig(self.model_name+'/outputs/{}.png'.format(epoch))
                 plt.close(fig)
+
+            ## counter for file names of saved models
+            epoch_counter += 1
         
         return [d_loss_avg_vec, g_loss_avg_vec, corr_vec, nzc_vec]
 
@@ -736,10 +741,10 @@ class MEDBGAN(MEDGAN):
                                       l2scale)
     
     def buildDiscriminator(self, x_real, x_fake, keepRate, decodeVariables, bn_train):
-        ## Discriminate for real samples
+        #Discriminate for real samples
         y_hat_real = self.getDiscriminatorResults(x_real, keepRate, reuse=False)
 
-        ## Decompress, then discriminate for fake samples
+        #Decompress, then discriminate for fake samples
         tempVec = x_fake
         i = 0
         for _ in self.decompressDims[:-1]:
@@ -756,3 +761,4 @@ class MEDBGAN(MEDGAN):
         loss_g = 0.5*tf.reduce_mean(tf.square(tf.log(y_hat_fake + 1e-12) - tf.log(1. - y_hat_fake + 1e-12)))
 
         return loss_d, loss_g, y_hat_real, y_hat_fake
+

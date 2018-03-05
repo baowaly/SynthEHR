@@ -26,6 +26,7 @@ def parse_arguments(parser):
     parser.add_argument('--data_type', type=str, default='binary', choices=['binary', 'count'], help='The input data type. The <patient matrix> could either contain binary values or count values. (default value: "binary")')
     parser.add_argument('--batchnorm_decay', type=float, default=0.99, help='Decay value for the moving average used in Batch Normalization. (default value: 0.99)')
     parser.add_argument('--L2', type=float, default=0.001, help='L2 regularization coefficient for all weights. (default value: 0.001)')
+    parser.add_argument('--gp_scale', type=float, default=10.0, help='Gradient penalty scale used in WGAN (default value: 10.0)')
     parser.add_argument('--data_file', type=str, default='data/inpatient_final_data.npy', help='The path to the numpy matrix containing aggregated patient records.')
     parser.add_argument('--out_name', type=str, default='generated.npy', help='The file name of the generating data.')
     parser.add_argument('--init_from', type=str, default=None, help='Continue training from saved model in the "models" sub-folder in this folder. If None, train from scratch. (default value: None)')
@@ -51,14 +52,35 @@ train_data = np.load(args.data_file)
 # Training GAN
 tf.reset_default_graph()
 with tf.Session() as sess:
-    mg = MEDGAN(sess,
-                model_name=args.model,
-                dataType=args.data_type,
-                inputDim=train_data.shape[1],
-                compressDims=args.compressor_size,
-                decompressDims=args.decompressor_size,
-                bnDecay=args.batchnorm_decay,
-                l2scale=args.L2)
+    # Parse the GAN type from args.model
+    if re.search('medWGAN', args.model):
+        mg = MEDWGAN(sess,
+                     model_name=args.model,
+                     dataType=args.data_type,
+                     inputDim=train_data.shape[1],
+                     compressDims=args.compressor_size,
+                     decompressDims=args.decompressor_size,
+                     bnDecay=args.batchnorm_decay,
+                     l2scale=args.L2,
+                     gp_scale=args.gp_scale)
+    elif re.search('medBGAN', args.model):
+        mg = MEDBGAN(sess,
+                     model_name=args.model,
+                     dataType=args.data_type,
+                     inputDim=train_data.shape[1],
+                     compressDims=args.compressor_size,
+                     decompressDims=args.decompressor_size,
+                     bnDecay=args.batchnorm_decay,
+                     l2scale=args.L2)
+    else:
+        mg = MEDGAN(sess,
+                    model_name=args.model,
+                    dataType=args.data_type,
+                    inputDim=train_data.shape[1],
+                    compressDims=args.compressor_size,
+                    decompressDims=args.decompressor_size,
+                    bnDecay=args.batchnorm_decay,
+                    l2scale=args.L2)
     mg.build_model()
     results = mg.train(data_path=args.data_file,
                        pretrainEpochs=args.n_pretrain_epoch,
@@ -72,17 +94,39 @@ with tf.Session() as sess:
 # Generate synthetic data
 tf.reset_default_graph()
 with tf.Session() as sess:
-    mg = MEDGAN(sess,
-                model_name=args.model,
-                dataType=args.data_type,
-                inputDim=train_data.shape[1],
-                compressDims=args.compressor_size,
-                decompressDims=args.decompressor_size,
-                bnDecay=args.batchnorm_decay,
-                l2scale=args.L2)
+    # Parse the GAN type from args.model
+    if re.search('medWGAN', args.model):
+        mg = MEDWGAN(sess,
+                     model_name=args.model,
+                     dataType=args.data_type,
+                     inputDim=train_data.shape[1],
+                     compressDims=args.compressor_size,
+                     decompressDims=args.decompressor_size,
+                     bnDecay=args.batchnorm_decay,
+                     l2scale=args.L2,
+                     gp_scale=args.gp_scale)
+    elif re.search('medBGAN', args.model):
+        mg = MEDBGAN(sess,
+                     model_name=args.model,
+                     dataType=args.data_type,
+                     inputDim=train_data.shape[1],
+                     compressDims=args.compressor_size,
+                     decompressDims=args.decompressor_size,
+                     bnDecay=args.batchnorm_decay,
+                     l2scale=args.L2)
+    else:
+        mg = MEDGAN(sess,
+                    model_name=args.model,
+                    dataType=args.data_type,
+                    inputDim=train_data.shape[1],
+                    compressDims=args.compressor_size,
+                    decompressDims=args.decompressor_size,
+                    bnDecay=args.batchnorm_decay,
+                    l2scale=args.L2)
     mg.build_model()
     mg.generateData(nSamples=train_data.shape[0],
                     gen_from=args.model,
+                    out_name='generated.npy',
                     batchSize=args.batch_size)
 
 
