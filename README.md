@@ -11,6 +11,9 @@ The goal of this research is to generate synthetic electronic health records (EH
 
 Source code explanation:
 ------------------------
+-   **train.py:** 
+
+-   **model.py:** 
 
 How to generate EHRs:
 ---------------------
