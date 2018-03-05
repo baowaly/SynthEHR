@@ -11,3 +11,10 @@ The goal of this research is to generate synthetic electronic health records (EH
 
 Source code explanation:
 ------------------------
+
+How to generate EHRs:
+---------------------
+
+### Step 1
+### Step 2
+### Step 3
