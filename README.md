@@ -11,13 +11,13 @@ The goal of this research is to generate synthetic electronic health records (EH
 
 Source code explanation:
 ------------------------
-'model.py' defines the 'MEDGAN', 'MEDWGAN', and 'MEDBGAN' classes, which will be imported in `train.py` to build the neural network for GAN training and EHR generation.
+`model.py` defines the `MEDGAN`, `MEDWGAN`, and `MEDBGAN` classes, which will be imported in `train.py` to build the neural network for GAN training and EHR generation.
 
 How to generate EHRs:
 ---------------------
 
 ### Step 1: Installation
-Install 'Tensorflow' and download/clone the source code 'model.py' and 'train.py'
+Install 'Tensorflow' and download/clone the source code `model.py` and `train.py`
 ### Step 2: Prepare the training data
 Download the MIMIC-III data, aggregate the medical codes (e.g. diagonsis codes, medication codes, or procedure codes) for each patient, and save them as an numpy data file (.npy file)
 ### Step 3: Train the GAN and generate EHR
@@ -25,7 +25,7 @@ Download the MIMIC-III data, aggregate the medical codes (e.g. diagonsis codes, 
   ```console
   $ python train.py --data_file [path to the training data (npy format)] --n_pretrain_epoch 100 --n_epoch 1000
   ```
--   During training, a progress bar will be showed for each epoch. Also, a folder will be created ('medGAN' by default) and two subfolders 'model' and 'output' will be created therein, with the former containing model checkpoints and the latter containing the synthetic EHR data (called 'generated.npy' by default).
+-   During training, a progress bar will be showed for each epoch. Also, a folder will be created (`medGAN` by default) and two subfolders 'model' and 'output' will be created therein, with the former containing model checkpoints and the latter containing the synthetic EHR data (called `generated.npy` by default).
 -   To specify output folder name, add parameter '--model [model_name]', where [model_name] is 'medGAN' with any prefix or postfix, such as 'medGAN_n_epoch_500'.
 -   To run improved GAN, add parameter '--model medWGAN' or '--model medBGAN'. Again, 'medWGAN' and 'medBGAN' can also have any prefix or postfix.
--   For more parameters, please refer to the source code in 'train.py'.
+-   For more parameters, please refer to the source code in `train.py`.
