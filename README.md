@@ -25,7 +25,7 @@ Download the MIMIC-III data, aggregate the medical codes (e.g. diagonsis codes, 
   ```console
   $ python train.py --data_file [path to the training data (npy format)] --n_pretrain_epoch 100 --n_epoch 1000
   ```
--   During training, a progress bar will be showed for each epoch. Also, a folder will be created (`medGAN` by default) and two subfolders 'model' and 'output' will be created therein, with the former containing model checkpoints and the latter containing the synthetic EHR data (called `generated.npy` by default).
--   To specify output folder name, add parameter '--model [model_name]', where [model_name] is 'medGAN' with any prefix or postfix, such as 'medGAN_n_epoch_500'.
--   To run improved GAN, add parameter '--model medWGAN' or '--model medBGAN'. Again, 'medWGAN' and 'medBGAN' can also have any prefix or postfix.
+-   During training, a progress bar will be showed for each epoch. Also, a folder will be created (`medGAN` by default) and two subfolders `model` and `output` will be created therein, with the former containing model checkpoints and the latter containing the synthetic EHR data (called `generated.npy` by default).
+-   To specify output folder name, add parameter `--model [model_name]`, where [model_name] is `medGAN` with any prefix or postfix, such as `medGAN_n_epoch_500`.
+-   To run improved GAN, add parameter `--model medWGAN` or `--model medBGAN`. Again, `medWGAN` and `medBGAN` can also have any prefix or postfix.
 -   For more parameters, please refer to the source code in `train.py`.
