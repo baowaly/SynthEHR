@@ -1,3 +1,8 @@
+## _tkinter.TclError: no display name and no $DISPLAY environment variable
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
 import sys, time, argparse, os, re
 import tensorflow as tf
 import numpy as np
@@ -8,7 +13,6 @@ from tensorflow.contrib.layers import l2_regularizer
 from tensorflow.contrib.layers import batch_norm
 import tensorflow.contrib.slim as slim
 import tqdm
-import matplotlib.pyplot as plt
 from scipy.stats.stats import pearsonr
 
 _VALIDATION_RATIO = 0.1

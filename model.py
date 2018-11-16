@@ -1,3 +1,8 @@
+## _tkinter.TclError: no display name and no $DISPLAY environment variable
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
 import sys, time, argparse, os, re
 import tensorflow as tf
 import numpy as np
@@ -8,7 +13,6 @@ from tensorflow.contrib.layers import l2_regularizer
 from tensorflow.contrib.layers import batch_norm
 import tensorflow.contrib.slim as slim
 import tqdm
-import matplotlib.pyplot as plt
 from scipy.stats.stats import pearsonr
 
 _VALIDATION_RATIO = 0.1
@@ -334,9 +338,8 @@ class MEDGAN(object):
                     batchX = validX[idx[i*pretrainBatchSize:(i+1)*pretrainBatchSize]]
                     loss = self.sess.run(self.loss_ae, feed_dict={self.x_raw:batchX})
                     validLossVec.append(loss)
-                validReverseLoss = 0.
-                buf = 'Pretrain_Epoch:%d, trainLoss:%f, validLoss:%f, validReverseLoss:%f' % \
-                    (epoch, np.mean(trainLossVec), np.mean(validLossVec), validReverseLoss)
+                buf = 'Pretrain_Epoch:%d, trainLoss:%f, validLoss:%f' % \
+                    (epoch, np.mean(trainLossVec), np.mean(validLossVec))
                 print(buf)
                 self.print2file(buf, log_path)
                 trainLossVecList.append(np.mean(trainLossVec))
@@ -601,9 +604,8 @@ class MEDWGAN(MEDGAN):
                     batchX = validX[idx[i*pretrainBatchSize:(i+1)*pretrainBatchSize]]
                     loss = self.sess.run(self.loss_ae, feed_dict={self.x_raw:batchX})
                     validLossVec.append(loss)
-                validReverseLoss = 0.
-                buf = 'Pretrain_Epoch:%d, trainLoss:%f, validLoss:%f, validReverseLoss:%f' % \
-                    (epoch, np.mean(trainLossVec), np.mean(validLossVec), validReverseLoss)
+                buf = 'Pretrain_Epoch:%d, trainLoss:%f, validLoss:%f' % \
+                    (epoch, np.mean(trainLossVec), np.mean(validLossVec))
                 print(buf)
                 self.print2file(buf, log_path)
                 trainLossVecList.append(np.mean(trainLossVec))
