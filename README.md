@@ -2,6 +2,11 @@ Synthesizing Electronic Health Records Using Improved Generative Adversarial Net
 ================
 Mrinal Kanti Baowaly, Chia-Ching Lin, Chao-Lin Liu, Kuan-Ta Chen
 
+Publication:
+------------
+
+Mrinal Kanti Baowaly, Chia-Ching Lin, Chao-Lin Liu, Kuan-Ta Chen, Synthesizing electronic health records using improved generative adversarial networks, Journal of the American Medical Informatics Association, Volume 26, Issue 3, March 2019, Pages 228–241, https://doi.org/10.1093/jamia/ocy142
+
 Our goal:
 ---------
 
